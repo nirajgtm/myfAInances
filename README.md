@@ -7,7 +7,23 @@ subscriptions and anomalies, and serves a dashboard at `127.0.0.1:8000`.
 Nothing leaves your machine. No third-party aggregators. PDFs, CSVs, and
 HTML page-saves are supported.
 
-<img width="518" height="881" alt="image" src="https://github.com/user-attachments/assets/0285c288-d5f9-487c-bc52-f5bc65695bc6" />
+<img width="502" height="878" alt="image" src="https://github.com/user-attachments/assets/c4b5d7a3-6732-40a2-b6df-06ca57c2570f" />
+
+<img width="502" height="878" alt="image" src="https://github.com/user-attachments/assets/5370c41b-d782-4d21-9ea1-e26c62d72744" />
+
+<img width="498" height="871" alt="image" src="https://github.com/user-attachments/assets/034fe385-264e-43cc-96c4-835c52744318" />
+
+<img width="500" height="875" alt="image" src="https://github.com/user-attachments/assets/b73d0303-930b-44cf-851a-98f585b6020d" />
+
+<img width="514" height="882" alt="image" src="https://github.com/user-attachments/assets/3218517f-1baa-43b8-bc8a-30c5fc0c7cf5" />
+
+<img width="501" height="878" alt="image" src="https://github.com/user-attachments/assets/eac9c2b4-f84a-4815-825d-afe5592a6ebd" />
+
+
+
+
+
+
 
 
 
