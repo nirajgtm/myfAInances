@@ -7,6 +7,11 @@ subscriptions and anomalies, and serves a dashboard at `127.0.0.1:8000`.
 Nothing leaves your machine. No third-party aggregators. PDFs, CSVs, and
 HTML page-saves are supported.
 
+<img width="518" height="881" alt="image" src="https://github.com/user-attachments/assets/0285c288-d5f9-487c-bc52-f5bc65695bc6" />
+
+
+
+
 ## Two-directory layout
 
 This repo holds skill prose, scripts, examples, and the dashboard code.
