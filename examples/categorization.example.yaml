@@ -1,0 +1,21 @@
+# Personal categorization rules. Layered on top of skill/categorization/default-rules.yaml.
+# Higher priority (lower number) wins. First match assigns the category.
+# See skill/categorization/rule-format.md for the full schema.
+
+rules:
+  - priority: 10
+    description_regex: "(?i)\\bWHOLE FOODS\\b|\\bTRADER JOE'?S\\b|\\bSAFEWAY\\b"
+    category_id: groceries
+
+  - priority: 10
+    description_regex: "(?i)\\bUBER\\b|\\bLYFT\\b"
+    category_id: rideshare
+
+  - priority: 20
+    description_regex: "(?i)NETFLIX|SPOTIFY|HULU|DISNEY\\+"
+    category_id: streaming
+    tag_subscription: true
+
+  - priority: 100
+    description_regex: "(?i)\\bATM\\b|FOREIGN TRANSACTION FEE|OVERDRAFT|NSF"
+    category_id: bank_fee

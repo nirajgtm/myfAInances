@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Periodically runs scripts/ingest.py to pick up anything new in the
+  inbox/ directory. Fires every 6 hours (21,600s) plus once at load.
+  Templated by scripts/setup.sh.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.myfainance.inbox-watch</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>@@REPO_ROOT@@/scripts/inbox-watcher.sh</string>
+  </array>
+
+  <key>StartInterval</key>
+  <integer>21600</integer>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>@@RUNTIME_PATH@@</string>
+    <key>FINANCE_CONFIG</key>
+    <string>@@DATA_ROOT@@/config.yaml</string>
+    <key>REPO_ROOT</key>
+    <string>@@REPO_ROOT@@</string>
+    <key>LOG_DIR</key>
+    <string>@@LOG_DIR@@</string>
+  </dict>
+
+  <key>RunAtLoad</key>
+  <true/>
+
+  <key>StandardOutPath</key>
+  <string>@@LOG_DIR@@/inbox-watch.log</string>
+  <key>StandardErrorPath</key>
+  <string>@@LOG_DIR@@/inbox-watch.log</string>
+
+  <key>ProcessType</key>
+  <string>Background</string>
+</dict>
+</plist>

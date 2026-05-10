@@ -1,0 +1,223 @@
+// Subscriptions content body. Used inside the Spending tab now (the old
+// MobileSubscriptions screen wraps this same component).
+
+import { useEffect, useState } from "react";
+import { Transaction, AppState, Subscription, api } from "../../shared/lib/api";
+import { fmtMoney, categoryColor, initialFor, cardShortName } from "../../shared/lib/format";
+import { MerchantIcon } from "../../shared/primitives/MerchantIcon";
+import { CardPill } from "../../shared/primitives/CardPill";
+
+interface Props {
+  transactions: Transaction[];
+  state: AppState;
+  onSelectTxn?: (t: Transaction) => void;
+}
+
+export function SubscriptionsList({ transactions, state, onSelectTxn }: Props) {
+  const [subs, setSubs] = useState<Subscription[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const refresh = () => api.subscriptions().then((s) => { setSubs(s); setLoading(false); }).catch(() => setLoading(false));
+  useEffect(() => { refresh(); }, []);
+
+  const dismiss = async (sub: Subscription) => {
+    if (!confirm(`Remove "${sub.merchant_canonical}" from subscriptions?\n\nIt won't be flagged as recurring on future ingests.`)) return;
+    try {
+      await api.dismissSubscription(sub.id);
+      await refresh();
+    } catch (e: any) {
+      alert(`Failed: ${e.message}`);
+    }
+  };
+
+  // Filter by selected cards: show subs whose primary_card_id is among any txn we currently see
+  const visibleAccountIds = new Set(transactions.map((t) => t.account_id));
+  const filtered = subs.filter((s) => {
+    if (visibleAccountIds.size === 0) return true;
+    return Object.keys(s.card_counts || {}).some((id) => visibleAccountIds.has(id));
+  });
+
+  const active = filtered.filter((s) => s.status === "active");
+  const monthlyTotal = active.reduce((sum, s) => sum + s.monthly_cost, 0);
+  const annualTotal = active.reduce((sum, s) => sum + s.annual_cost, 0);
+  const candidates = active.filter((s) => s.suggestion_tags.length > 0);
+
+  return (
+    <div>
+      {/* Hero */}
+      <div style={{ background: "var(--bg-elev)", borderRadius: "var(--r-xl)", padding: 22, boxShadow: "var(--shadow-md)" }}>
+        <div style={{ fontSize: 12, color: "var(--text-3)", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+          Annualized
+        </div>
+        <div className="num-display" style={{ fontSize: 38, fontWeight: 500, letterSpacing: "-0.04em", marginTop: 4, lineHeight: 1 }}>
+          {fmtMoney(annualTotal, { decimals: 0, abs: true })}
+        </div>
+        <div style={{ display: "flex", gap: 16, marginTop: 14 }}>
+          <Stat label="Monthly" value={fmtMoney(monthlyTotal, { decimals: 2, abs: true })} />
+          <Stat label="Active" value={String(active.length)} />
+        </div>
+      </div>
+
+      {loading && (
+        <div style={{ padding: 20, textAlign: "center", color: "var(--text-3)", fontSize: 13 }}>
+          Loading subscriptions...
+        </div>
+      )}
+
+      {!loading && active.length === 0 && (
+        <div style={{ marginTop: 24, padding: 24, background: "var(--bg-elev)", borderRadius: "var(--r-lg)", textAlign: "center", color: "var(--text-3)", fontSize: 13, lineHeight: 1.5 }}>
+          No active recurring patterns yet. We need 2+ statements per merchant to confirm a subscription.
+        </div>
+      )}
+
+      {candidates.length > 0 && (
+        <>
+          <SectionLabel text={`Worth a look · ${candidates.length}`} accent />
+          <div style={{ background: "var(--bg-elev)", borderRadius: "var(--r-lg)", boxShadow: "var(--shadow-sm)", overflow: "hidden" }}>
+            {candidates.map((s, i) => (
+              <SubRow
+                key={s.id}
+                sub={s}
+                state={state}
+                isFirst={i === 0}
+                onClick={() => {
+                  const t = transactions.find((tx) => s.txn_ids.includes(tx.id));
+                  if (t && onSelectTxn) onSelectTxn(t);
+                }}
+                onDismiss={() => dismiss(s)}
+              />
+            ))}
+          </div>
+        </>
+      )}
+
+      {active.length > 0 && (
+        <>
+          <SectionLabel text={`Active · ${active.length}`} />
+          <div style={{ background: "var(--bg-elev)", borderRadius: "var(--r-lg)", boxShadow: "var(--shadow-sm)", overflow: "hidden" }}>
+            {active.map((s, i) => (
+              <SubRow
+                key={s.id}
+                sub={s}
+                state={state}
+                isFirst={i === 0}
+                onClick={() => {
+                  const t = transactions.find((tx) => s.txn_ids.includes(tx.id));
+                  if (t && onSelectTxn) onSelectTxn(t);
+                }}
+                onDismiss={() => dismiss(s)}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div style={{ flex: 1, padding: "10px 0 0", borderTop: "1px solid var(--line)" }}>
+      <div style={{ fontSize: 11, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.04em", fontWeight: 600 }}>
+        {label}
+      </div>
+      <div className="num" style={{ fontSize: 17, fontWeight: 600, marginTop: 3 }}>{value}</div>
+    </div>
+  );
+}
+
+function SectionLabel({ text, accent }: { text: string; accent?: boolean }) {
+  return (
+    <div
+      style={{
+        fontSize: 11,
+        color: accent ? "var(--accent)" : "var(--text-3)",
+        fontWeight: 600,
+        textTransform: "uppercase",
+        letterSpacing: "0.06em",
+        margin: "20px 4px 8px",
+      }}
+    >
+      {text}
+    </div>
+  );
+}
+
+function SubRow({ sub, state, isFirst, onClick, onDismiss }: { sub: Subscription; state: AppState; isFirst: boolean; onClick?: () => void; onDismiss?: () => void }) {
+  const acct = state.accounts.find((a) => a.id === sub.primary_card_id);
+  const cadenceLabel = sub.cadence === "monthly" ? "/mo" : sub.cadence === "annual" ? "/yr" : "/qtr";
+  const flags = sub.suggestion_tags;
+  const hasPriceUp = flags.includes("recent_price_increase");
+
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        width: "100%",
+        background: "transparent",
+        border: "none",
+        cursor: onClick ? "pointer" : "default",
+        textAlign: "left",
+        padding: "11px 14px",
+        borderTop: isFirst ? "none" : "0.5px solid var(--line)",
+        display: "flex",
+        alignItems: "center",
+        gap: 11,
+        color: "inherit",
+      }}
+    >
+      <MerchantIcon
+        label={sub.merchant_canonical || initialFor(sub.merchant_canonical)}
+        color={categoryColor(sub.category)}
+        size={32}
+        radius={9}
+      />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 13.5, fontWeight: 500, letterSpacing: "-0.01em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          {sub.merchant_canonical}
+        </div>
+        <div style={{ fontSize: 11.5, color: "var(--text-3)", marginTop: 3, display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+          {acct && <CardPill id={acct.id} name={cardShortName(acct.nickname)} />}
+          <span>{sub.cadence}</span>
+          {hasPriceUp && (
+            <span style={{ color: "var(--warning)", fontWeight: 600 }}>
+              ↑ +{Math.round(sub.last_price_change?.delta_pct || 0)}%
+            </span>
+          )}
+        </div>
+      </div>
+      <div className="num" style={{ fontSize: 14, fontWeight: 600, textAlign: "right" }}>
+        <div>{fmtMoney(sub.current_amount, { decimals: 2, abs: true })}</div>
+        <div style={{ fontSize: 10.5, color: "var(--text-3)", fontWeight: 500 }}>{cadenceLabel}</div>
+      </div>
+      {onDismiss && (
+        <span
+          role="button"
+          aria-label="Not a subscription"
+          title="Not a subscription"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDismiss();
+          }}
+          style={{
+            width: 24,
+            height: 24,
+            borderRadius: 12,
+            background: "var(--bg-mute)",
+            color: "var(--text-3)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+            cursor: "pointer",
+            marginLeft: 4,
+          }}
+        >
+          <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+            <path d="M3 3l6 6M9 3l-6 6" />
+          </svg>
+        </span>
+      )}
+    </button>
+  );
+}

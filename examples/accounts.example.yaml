@@ -1,0 +1,49 @@
+# Your accounts. The first ingest of any statement auto-creates entries
+# here using the institution slug + last4 the LLM extracts. You don't
+# need to add anything by hand.
+#
+# After accounts are created, you can edit them in personal/accounts.yaml
+# to set:
+#   - nickname     (display name on the dashboard)
+#   - login_url    (override the seeded portal URL)
+#   - notes        (free-form personal notes)
+#   - credit_limit (used for utilization tracking on credit cards)
+#   - benefits     (powers the Cards section: rewards categories, perks)
+#
+# Editing is also possible from the dashboard — tap the pencil icon on
+# any account's detail sheet.
+#
+# ─── Schema reference (commented out — uncomment to add manually) ────
+#
+# accounts:
+#   - id: <issuer-slug>_<product-slug>
+#     institution: <issuer-slug>
+#     type: checking          # checking | savings | credit_card | brokerage | loan |
+#                             #   mortgage | hsa | 401k | ira | roth_ira | utility |
+#                             #   toll | insurance
+#     last4: "<last4>"
+#     nickname: "<Account Name>"
+#     login_url: "https://<issuer-portal>/login"
+#     currency: USD
+#     statement_format: pdf   # pdf | csv | html
+#
+#   - id: <issuer-slug>_<product-slug>
+#     institution: <issuer-slug>
+#     type: credit_card
+#     last4: "<last4>"
+#     nickname: "<Card Name>"
+#     currency: USD
+#     statement_format: pdf
+#     credit_limit: 10000
+#     benefits:
+#       annual_fee: 0                     # number (USD per year, 0 if no fee)
+#       points_value_cents: 1.0           # cents-per-point at typical redemption
+#       categories:
+#         - { match: "*",          rate: 1, unit: "x", note: "All purchases" }
+#         - { match: "dining_out", rate: 3, unit: "x", note: "<scope/note>" }
+#         - { match: "groceries",  rate: 2, unit: "x", scope: "<short scope or null>" }
+#       perks:
+#         - { name: "<perk title>", group: "dining|travel|insurance|rewards|fees|concierge|other", annual: true }
+#         - { name: "No foreign transaction fees", group: "fees" }
+
+accounts: []

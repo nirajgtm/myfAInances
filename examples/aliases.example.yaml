@@ -1,0 +1,21 @@
+# Merchant name normalization.
+# Maps raw description patterns to a canonical merchant name.
+# The merchants registry (db/merchants.json) is built up automatically; this file
+# is for explicit overrides where automatic canonicalization gets it wrong.
+
+aliases:
+  - pattern: "(?i)STARBUCKS\\s*(STORE\\s*#\\d+)?"
+    canonical: "Starbucks"
+    default_category: coffee
+
+  - pattern: "(?i)AMZN\\s*MKTP|AMAZON\\.COM"
+    canonical: "Amazon"
+    default_category: shopping
+
+  - pattern: "(?i)SQ\\s*\\*\\s*(.+)"      # Square charges, capture the merchant name
+    canonical: "$1"                       # use the captured group as canonical
+    default_category: null                # let AI categorize per merchant
+
+  - pattern: "(?i)PAYPAL\\s*\\*\\s*(.+)"
+    canonical: "$1"
+    default_category: null

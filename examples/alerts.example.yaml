@@ -1,0 +1,21 @@
+# Personalize anomaly detection thresholds and merchant lists.
+
+# Override the global large-transaction threshold (default in config.yaml)
+large_txn_threshold: 500
+
+# Always-flag list. Any txn matching these merchants surfaces in the report regardless of pattern.
+flag_always:
+  - "(?i)WIRE FEE"
+  - "(?i)EARLY WITHDRAWAL PENALTY"
+
+# Mute list. Suppress anomaly flags for these merchants (they are known-OK).
+mute:
+  - merchant: "(?i)NETFLIX"
+    flags: ["recent_price_increase"]   # mute only specific flag types
+  - merchant: "(?i)IRS PAYMENT"
+    flags: ["round_number_large", "outlier_amount"]
+
+# Block list. Charges matching these merchants are flagged as "unwanted" in the report.
+block:
+  - merchant: "(?i)PLANET FITNESS"
+    reason: "I cancelled this in March, should not be charging"

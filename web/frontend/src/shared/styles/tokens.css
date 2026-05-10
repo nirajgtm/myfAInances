@@ -1,0 +1,150 @@
+/* myfAInance — design tokens (ported from designs/tokens.css)
+   Soft modern, warm neutrals, terracotta accent. */
+
+:root {
+  /* Type */
+  --font-display: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-text:    "Geist", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-numeric: "Geist Mono", "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+  --font-serif:   "Fraunces", "Instrument Serif", Georgia, "Times New Roman", serif;
+
+  /* Warm neutrals */
+  --bg:        #faf8f4;
+  --bg-elev:   #ffffff;
+  --bg-sunken: #f3efe7;
+  --bg-mute:   #ece7dc;
+  --bg-translucent: rgba(250, 248, 244, 0.92);
+  --line:        rgba(38, 30, 22, 0.08);
+  --line-strong: rgba(38, 30, 22, 0.14);
+
+  /* Text */
+  --text:   #1a1714;
+  --text-2: #4a4239;
+  --text-3: #80776c;
+  --text-4: #aaa297;
+
+  /* Accent */
+  --accent:      #c25e3b;
+  --accent-soft: #f5dccd;
+  --accent-deep: #8a3e22;
+
+  /* Categorical palette */
+  --c-food: #d97757;            --c-food-soft: #f8e0d3;
+  --c-transit: #5b8c7a;         --c-transit-soft: #d8e8e0;
+  --c-housing: #4a6b8a;         --c-housing-soft: #d6e0ec;
+  --c-shopping: #b8538f;        --c-shopping-soft: #f1d5e5;
+  --c-entertainment: #c89849;   --c-entertainment-soft: #f5e6c4;
+  --c-health: #7a5cab;          --c-health-soft: #e3d8f0;
+  --c-services: #3d8b8b;        --c-services-soft: #cfe5e5;
+  --c-income: #4d8855;          --c-income-soft: #d5e6d8;
+  --c-investments: #d4a437;     --c-investments-soft: #f5e6b8;
+
+  /* Status */
+  --positive: #2f7a3a;
+  --negative: #b53a2c;
+  --warning:  #c08a1a;
+  --warning-soft: #f5e6b8;
+
+  /* Radii */
+  --r-xs: 6px;
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+  --r-pill: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(38, 30, 22, 0.04), 0 1px 1px rgba(38, 30, 22, 0.03);
+  --shadow-md: 0 2px 4px rgba(38, 30, 22, 0.04), 0 6px 16px rgba(38, 30, 22, 0.06);
+  --shadow-lg: 0 8px 24px rgba(38, 30, 22, 0.08), 0 24px 48px rgba(38, 30, 22, 0.06);
+}
+
+/* Dark mode: follows system preference unless overridden via [data-theme]. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:        #1a1714;
+    --bg-elev:   #221e1a;
+    --bg-sunken: #14110e;
+    --bg-mute:   #2a251f;
+    --line:        rgba(255, 250, 240, 0.08);
+    --line-strong: rgba(255, 250, 240, 0.14);
+    --text:   #f5f1ea;
+    --text-2: #c5bdaf;
+    --text-3: #80776c;
+    --text-4: #5a534b;
+    --accent-soft: #4a2818;
+    --bg-translucent: rgba(26, 23, 20, 0.92);
+    /* Re-tune shadows for dark background (light shadows are invisible on dark). */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.20), 0 1px 1px rgba(0, 0, 0, 0.14);
+    --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.22), 0 6px 16px rgba(0, 0, 0, 0.30);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.40), 0 24px 48px rgba(0, 0, 0, 0.30);
+  }
+}
+
+/* Manual override: <html data-theme="dark"> always-dark, regardless of system. */
+[data-theme="dark"] {
+  --bg:        #1a1714;
+  --bg-elev:   #221e1a;
+  --bg-sunken: #14110e;
+  --bg-mute:   #2a251f;
+  --line:        rgba(255, 250, 240, 0.08);
+  --line-strong: rgba(255, 250, 240, 0.14);
+  --text:   #f5f1ea;
+  --text-2: #c5bdaf;
+  --text-3: #80776c;
+  --text-4: #5a534b;
+  --accent-soft: #4a2818;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.20), 0 1px 1px rgba(0, 0, 0, 0.14);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.22), 0 6px 16px rgba(0, 0, 0, 0.30);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.40), 0 24px 48px rgba(0, 0, 0, 0.30);
+}
+
+/* Legacy class for design-system parity. */
+.dark-surface {
+  --bg:        #1a1714;
+  --bg-elev:   #221e1a;
+  --bg-sunken: #14110e;
+  --bg-mute:   #2a251f;
+  --line:        rgba(255, 250, 240, 0.08);
+  --line-strong: rgba(255, 250, 240, 0.14);
+  --text:   #f5f1ea;
+  --text-2: #c5bdaf;
+  --text-3: #80776c;
+  --text-4: #5a534b;
+  --accent-soft: #4a2818;
+}
+
+/* Editorial direction (serif accents, paper warmth). */
+.dir-editorial {
+  --font-display: "Fraunces", "Instrument Serif", Georgia, serif;
+  --bg:        #f6f1e7;
+  --bg-elev:   #fcf9f3;
+  --bg-sunken: #ede5d3;
+  --bg-mute:   #e2d8c0;
+  --accent:      #6b4226;
+  --accent-soft: #ead7c0;
+}
+
+/* Numeric helpers */
+.num {
+  font-family: var(--font-numeric);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum", "ss01";
+  letter-spacing: -0.01em;
+}
+.num-display {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  letter-spacing: -0.04em;
+  font-weight: 500;
+}
+
+.cat-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  display: inline-block; flex-shrink: 0;
+}
+
+/* Hide scrollbar on horizontal pill rows */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }

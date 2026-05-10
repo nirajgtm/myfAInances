@@ -1,0 +1,89 @@
+# Generic merchant -> category rules. Personal additions go in personal/categorization.yaml.
+# Schema: see rule-format.md.
+# Lower priority numbers win. Convention:
+#   1-19   strong bank-side signals (fees, transfers, interest)
+#   20-49  big global merchants
+#   50-99  mid-size and category-defining merchants
+#   100+   broad fallbacks
+
+rules:
+  # ---- Bank-side signals ----
+  - { priority: 1,  description_regex: "(?i)\\b(ATM|FOREIGN TRANSACTION|OVERDRAFT|NSF|LATE PAYMENT|RETURNED PAYMENT|MAINTENANCE|WIRE|SERVICE)\\s*FEE\\b", category_id: bank_fee }
+  - { priority: 1,  description_regex: "(?i)\\bINTEREST CHARGE(D)?\\b",                                category_id: interest_charged }
+  - { priority: 1,  description_regex: "(?i)\\bINTEREST EARNED\\b|\\bINTEREST PAYMENT\\b",             category_id: interest_income, tax_tag: interest }
+  - { priority: 1,  description_regex: "(?i)\\bDIVIDEND\\b",                                           category_id: dividend_income, tax_tag: dividend }
+  - { priority: 1,  description_regex: "(?i)\\bMOBILE DEPOSIT\\b|\\bDIRECT DEPOSIT\\b",                category_id: salary }
+  - { priority: 1,  description_regex: "(?i)\\bAUTOPAY|PAYMENT THANK YOU|ONLINE PMT|MOBILE PMT\\b",    category_id: cc_payment }
+  - { priority: 1,  description_regex: "(?i)\\bTRANSFER (TO|FROM)\\b|\\bACH TRANSFER\\b",              category_id: account_transfer }
+
+  # ---- Streaming ----
+  - { priority: 20, description_regex: "(?i)NETFLIX",                                                  category_id: streaming, tag_subscription: true }
+  - { priority: 20, description_regex: "(?i)\\bHULU\\b",                                               category_id: streaming, tag_subscription: true }
+  - { priority: 20, description_regex: "(?i)DISNEY\\s*PLUS|DISNEY\\+",                                 category_id: streaming, tag_subscription: true }
+  - { priority: 20, description_regex: "(?i)HBO\\s*MAX|MAX\\s*\\.\\s*COM",                             category_id: streaming, tag_subscription: true }
+  - { priority: 20, description_regex: "(?i)\\bPARAMOUNT\\+|PARAMOUNT PLUS",                           category_id: streaming, tag_subscription: true }
+  - { priority: 20, description_regex: "(?i)YOUTUBE\\s*(PREMIUM|TV)",                                  category_id: streaming, tag_subscription: true }
+  - { priority: 20, description_regex: "(?i)\\bAPPLE\\s*TV\\b",                                        category_id: streaming, tag_subscription: true }
+
+  # ---- Music ----
+  - { priority: 22, description_regex: "(?i)SPOTIFY",                                                  category_id: music, tag_subscription: true }
+  - { priority: 22, description_regex: "(?i)APPLE\\s*MUSIC",                                           category_id: music, tag_subscription: true }
+  - { priority: 22, description_regex: "(?i)PANDORA",                                                  category_id: music, tag_subscription: true }
+  - { priority: 22, description_regex: "(?i)TIDAL",                                                    category_id: music, tag_subscription: true }
+
+  # ---- Cloud and software subscriptions ----
+  - { priority: 24, description_regex: "(?i)\\bICLOUD\\b|APPLE\\.COM/BILL",                            category_id: cloud_storage, tag_subscription: true }
+  - { priority: 24, description_regex: "(?i)DROPBOX",                                                  category_id: cloud_storage, tag_subscription: true }
+  - { priority: 24, description_regex: "(?i)GOOGLE\\s*ONE|GOOGLE\\s*STORAGE",                          category_id: cloud_storage, tag_subscription: true }
+  - { priority: 26, description_regex: "(?i)ADOBE",                                                    category_id: software, tag_subscription: true }
+  - { priority: 26, description_regex: "(?i)MICROSOFT\\s*365|OFFICE\\s*365",                           category_id: software, tag_subscription: true }
+  - { priority: 26, description_regex: "(?i)GITHUB",                                                   category_id: software, tag_subscription: true }
+  - { priority: 26, description_regex: "(?i)NOTION",                                                   category_id: software, tag_subscription: true }
+  - { priority: 26, description_regex: "(?i)1PASSWORD",                                                category_id: software, tag_subscription: true }
+
+  # ---- News ----
+  - { priority: 28, description_regex: "(?i)NYTIMES|NEW YORK TIMES",                                   category_id: news, tag_subscription: true }
+  - { priority: 28, description_regex: "(?i)WALL STREET JOURNAL|WSJ\\.COM",                            category_id: news, tag_subscription: true }
+  - { priority: 28, description_regex: "(?i)WASHINGTON\\s*POST",                                       category_id: news, tag_subscription: true }
+  - { priority: 28, description_regex: "(?i)SUBSTACK",                                                 category_id: news, tag_subscription: true }
+
+  # ---- Coffee ----
+  - { priority: 30, description_regex: "(?i)STARBUCKS",                                                category_id: coffee }
+  - { priority: 30, description_regex: "(?i)PEET'?S\\s*COFFEE|BLUE\\s*BOTTLE|PHILZ",                   category_id: coffee }
+  - { priority: 30, description_regex: "(?i)DUNKIN",                                                   category_id: coffee }
+
+  # ---- Food delivery ----
+  - { priority: 32, description_regex: "(?i)DOORDASH",                                                 category_id: food_delivery }
+  - { priority: 32, description_regex: "(?i)UBER\\s*EATS|UBEREATS",                                    category_id: food_delivery }
+  - { priority: 32, description_regex: "(?i)GRUBHUB|SEAMLESS",                                         category_id: food_delivery }
+  - { priority: 32, description_regex: "(?i)INSTACART",                                                category_id: groceries }
+
+  # ---- Rideshare and transit ----
+  - { priority: 34, description_regex: "(?i)\\bUBER\\b(?!\\s*EATS)",                                   category_id: rideshare }
+  - { priority: 34, description_regex: "(?i)\\bLYFT\\b",                                               category_id: rideshare }
+  - { priority: 36, description_regex: "(?i)\\bBART\\b|\\bMTA\\b|\\bSEPTA\\b|\\bWMATA\\b|\\bCALTRAIN\\b", category_id: public_transit }
+
+  # ---- Groceries (chains) ----
+  - { priority: 40, description_regex: "(?i)WHOLE\\s*FOODS",                                           category_id: groceries }
+  - { priority: 40, description_regex: "(?i)TRADER\\s*JOE'?S",                                         category_id: groceries }
+  - { priority: 40, description_regex: "(?i)SAFEWAY|ALBERTSONS|KROGER|PUBLIX",                         category_id: groceries }
+  - { priority: 40, description_regex: "(?i)COSTCO",                                                   category_id: groceries }
+
+  # ---- Gas ----
+  - { priority: 42, description_regex: "(?i)SHELL\\s*OIL|CHEVRON|EXXON|MOBIL|76|VALERO|BP\\s*PRODUCTS", category_id: gas }
+
+  # ---- Pharmacy ----
+  - { priority: 44, description_regex: "(?i)CVS\\s*PHARM|WALGREENS|RITE\\s*AID",                       category_id: pharmacy }
+
+  # ---- Big-box ----
+  - { priority: 50, description_regex: "(?i)AMZN\\s*MKTP|AMAZON\\.COM",                                category_id: shopping }
+  - { priority: 50, description_regex: "(?i)TARGET\\.COM|TARGET\\s*\\d",                               category_id: shopping }
+  - { priority: 50, description_regex: "(?i)WALMART",                                                  category_id: shopping }
+
+  # ---- Travel ----
+  - { priority: 60, description_regex: "(?i)UNITED\\s*AIR|DELTA\\s*AIR|AMERICAN\\s*AIR|SOUTHWEST\\s*AIR|JETBLUE", category_id: flights }
+  - { priority: 60, description_regex: "(?i)MARRIOTT|HILTON|HYATT|IHG|AIRBNB|VRBO",                    category_id: hotels }
+
+  # ---- Tolls / parking ----
+  - { priority: 70, description_regex: "(?i)\\bTOLL\\b|FASTRAK|EZ\\s*PASS",                            category_id: tolls }
+  - { priority: 70, description_regex: "(?i)PARKMOBILE|PAYBYPHONE\\s*PARK|SP\\s*\\+\\s*PARKING",       category_id: parking }

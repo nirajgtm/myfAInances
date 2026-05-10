@@ -1,0 +1,108 @@
+# Default category seed list. Loaded into db/categories.json on init.
+# Personal additions and overrides go in personal/categories.yaml.
+# Merge order: this file -> personal/categories.yaml -> ai-added at runtime.
+
+categories:
+  # ---- Income ----
+  - { id: income,           name: "Income",                  parent: null }
+  - { id: salary,           name: "Salary",                  parent: income }
+  - { id: bonus,            name: "Bonus",                   parent: income }
+  - { id: interest_income,  name: "Interest Income",         parent: income, aliases: ["Bank Interest"] }
+  - { id: dividend_income,  name: "Dividend Income",         parent: income }
+  - { id: refund,           name: "Refund",                  parent: income }
+  - { id: other_income,     name: "Other Income",            parent: income }
+
+  # ---- Housing ----
+  - { id: housing,          name: "Housing",                 parent: null }
+  - { id: rent,             name: "Rent",                    parent: housing }
+  - { id: mortgage,         name: "Mortgage",                parent: housing }
+  - { id: utilities,        name: "Utilities",               parent: housing, aliases: ["Power", "Gas Bill", "Water"] }
+  - { id: internet,         name: "Internet",                parent: housing }
+  - { id: home_maintenance, name: "Home Maintenance",        parent: housing }
+
+  # ---- Food ----
+  - { id: food,             name: "Food",                    parent: null }
+  - { id: groceries,        name: "Groceries",               parent: food, aliases: ["Supermarket"] }
+  - { id: dining_out,       name: "Dining Out",              parent: food, aliases: ["Restaurants"] }
+  - { id: coffee,           name: "Coffee",                  parent: food, aliases: ["Cafe", "Coffee Shops"] }
+  - { id: bars,             name: "Bars and Alcohol",        parent: food }
+  - { id: food_delivery,    name: "Food Delivery",           parent: food, aliases: ["DoorDash", "UberEats"] }
+
+  # ---- Transportation ----
+  - { id: transportation,   name: "Transportation",          parent: null }
+  - { id: gas,              name: "Gas",                     parent: transportation, aliases: ["Fuel"] }
+  - { id: public_transit,   name: "Public Transit",          parent: transportation }
+  - { id: rideshare,        name: "Rideshare",               parent: transportation }
+  - { id: parking,          name: "Parking",                 parent: transportation }
+  - { id: tolls,            name: "Tolls",                   parent: transportation }
+  - { id: car_maintenance,  name: "Car Maintenance",         parent: transportation }
+  - { id: ev_charging,      name: "EV Charging",             parent: transportation }
+
+  # ---- Health ----
+  - { id: health,           name: "Health",                  parent: null }
+  - { id: pharmacy,         name: "Pharmacy",                parent: health }
+  - { id: medical,          name: "Medical",                 parent: health }
+  - { id: dental,           name: "Dental",                  parent: health }
+  - { id: vision,           name: "Vision",                  parent: health }
+  - { id: health_insurance, name: "Health Insurance",        parent: health }
+  - { id: therapy,          name: "Therapy",                 parent: health }
+  - { id: gym,              name: "Gym and Fitness",         parent: health }
+
+  # ---- Shopping ----
+  - { id: shopping,         name: "Shopping",                parent: null }
+  - { id: clothing,         name: "Clothing",                parent: shopping }
+  - { id: electronics,      name: "Electronics",             parent: shopping }
+  - { id: home_goods,       name: "Home Goods",              parent: shopping }
+  - { id: gifts,            name: "Gifts",                   parent: shopping }
+
+  # ---- Entertainment ----
+  - { id: entertainment,    name: "Entertainment",           parent: null }
+  - { id: streaming,        name: "Streaming",               parent: entertainment, aliases: ["Netflix", "Hulu", "Disney+"] }
+  - { id: music,            name: "Music",                   parent: entertainment, aliases: ["Spotify", "Apple Music"] }
+  - { id: games,            name: "Games",                   parent: entertainment }
+  - { id: events,           name: "Events and Tickets",      parent: entertainment }
+  - { id: books,            name: "Books",                   parent: entertainment }
+
+  # ---- Personal ----
+  - { id: personal_care,    name: "Personal Care",           parent: null, aliases: ["Haircuts", "Cosmetics"] }
+
+  # ---- Travel ----
+  - { id: travel,           name: "Travel",                  parent: null }
+  - { id: flights,          name: "Flights",                 parent: travel }
+  - { id: hotels,           name: "Hotels and Lodging",      parent: travel, aliases: ["Airbnb"] }
+  - { id: travel_foreign,   name: "Travel (Foreign)",        parent: travel }
+
+  # ---- Subscriptions (digital services not covered elsewhere) ----
+  - { id: subscriptions,    name: "Subscriptions",           parent: null }
+  - { id: cloud_storage,    name: "Cloud Storage",           parent: subscriptions, aliases: ["iCloud", "Dropbox", "Google One"] }
+  - { id: software,         name: "Software",                parent: subscriptions }
+  - { id: news,             name: "News and Media",          parent: subscriptions }
+
+  # ---- Financial ----
+  - { id: financial,        name: "Financial",               parent: null }
+  - { id: bank_fee,         name: "Bank Fee",                parent: financial }
+  - { id: interest_charged, name: "Interest Charged",        parent: financial }
+  - { id: tax,              name: "Tax",                     parent: financial }
+  - { id: investment,       name: "Investment",              parent: financial }
+  - { id: insurance,        name: "Insurance (other)",       parent: financial }
+  - { id: charity,          name: "Charity",                 parent: financial }
+
+  # ---- Transfers ----
+  - { id: transfer,         name: "Transfer",                parent: null }
+  - { id: cc_payment,       name: "Credit Card Payment",     parent: transfer }
+  - { id: account_transfer, name: "Account Transfer",        parent: transfer }
+
+  # ---- Catchall ----
+  - { id: uncategorized,    name: "Uncategorized",           parent: null }
+  - { id: other,            name: "Other",                   parent: null }
+
+# Sub-category groupings for overlap detection (used by features/subscriptions.md).
+# Multiple subscriptions in the same group trigger overlap_<group> tags.
+overlap_groups:
+  streaming: [streaming]
+  cloud_storage: [cloud_storage]
+  music: [music]
+  news: [news]
+  software: [software]
+  food_delivery: [food_delivery]
+  gym: [gym]

@@ -1,0 +1,22 @@
+# Personal category overrides. Layered on top of skill/categorization/default-categories.yaml.
+#
+# Two ways to use this file:
+#   1. Add new categories that should be available before AI ever proposes one.
+#   2. Mark categories as frozen so AI must use them (cannot invent near-duplicates).
+#
+# Category ids are stable strings. Names are display-only and can be renamed any time.
+
+categories:
+  # Example: I want a top-level "Side Hustle Income" category seeded
+  - id: side_hustle_income
+    name: "Side Hustle Income"
+    parent: income
+    aliases: ["1099 Income", "Freelance"]
+
+  # Example: freeze "Groceries" so AI cannot create "Supermarkets" alongside it
+  - id: groceries
+    frozen: true
+
+  # Example: rename a default category for personal preference
+  - id: dining_out
+    name: "Restaurants"

@@ -1,0 +1,17 @@
+# All user data lives outside this repo (default: ~/claude-configs/finance-data/).
+# This .gitignore only excludes OS junk and local editor files.
+
+.DS_Store
+*.swp
+*.swo
+.idea/
+.vscode/
+__pycache__/
+*.pyc
+
+# Web build artifacts and local-only stuff
+web/backend/.venv/
+web/frontend/node_modules/
+web/frontend/dist/
+web/frontend/vite.config.d.ts
+web/frontend/vite.config.js
