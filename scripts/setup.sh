@@ -121,6 +121,41 @@ require_cmd() {
   ok "$cmd: $($cmd --version 2>&1 | head -1)"
 }
 
+# Node not installed at all — offer to install via the user's existing
+# package manager (with confirmation). Node is the one prereq we know
+# how to install reliably on macOS and that the user is likely to want
+# auto-handled.
+if ! command -v node >/dev/null 2>&1; then
+  printf '  \033[33m!\033[0m node is not installed.\n' >&2
+  installer=""
+  if command -v brew >/dev/null 2>&1; then
+    installer="brew"
+  elif [[ -s "$HOME/.nvm/nvm.sh" ]]; then
+    installer="nvm"
+  fi
+
+  if [[ -n "$installer" && -r /dev/tty ]]; then
+    printf "    Install node via %s now? [Y/n] " "$installer" >&2
+    read -r reply </dev/tty
+    case "${reply:-Y}" in
+      [Nn]*)
+        echo "    Skipped. Install node manually, then re-run." >&2
+        ;;
+      *)
+        if [[ "$installer" == "brew" ]]; then
+          brew update >/dev/null 2>&1 || true
+          brew install node
+        else
+          # shellcheck source=/dev/null
+          . "$HOME/.nvm/nvm.sh"
+          nvm install --lts && nvm use --lts
+        fi
+        hash -r
+        ;;
+    esac
+  fi
+fi
+
 missing=0
 require_cmd python3 "https://www.python.org/downloads/ — need 3.9+"   || missing=1
 require_cmd node    "https://nodejs.org/ or 'brew install node'"      || missing=1
@@ -138,6 +173,60 @@ if [[ "$PY_OK" != "1" ]]; then
   exit 1
 fi
 ok "python3 version OK"
+
+# Node version sanity (>= 18 — Vite 5 + ESM crypto APIs require it).
+# Homebrew users on a long-running install often have node 14/16 still
+# in PATH; the symptom is a cryptic "Unexpected token" or
+# "crypto.hash is not a function" mid-vite-build. Auto-fix when we can.
+NODE_MAJOR=$(node -p 'parseInt(process.versions.node.split(".")[0],10)' 2>/dev/null || echo 0)
+if [[ "$NODE_MAJOR" -lt 18 ]]; then
+  fail "node is too old: $(node --version) (need >= 18 for Vite 5)"
+  NODE_PATH=$(command -v node)
+  upgraded=0
+
+  if [[ "$NODE_PATH" == /opt/homebrew/* || "$NODE_PATH" == /usr/local/* ]] \
+       && command -v brew >/dev/null 2>&1; then
+    dim "Homebrew detected — auto-upgrading node (this can take ~30-60s)..."
+    brew update >/dev/null 2>&1 || true
+    if brew upgrade node; then
+      upgraded=1
+    elif brew reinstall node; then
+      upgraded=1
+    fi
+  elif [[ -s "$HOME/.nvm/nvm.sh" ]]; then
+    dim "nvm detected — auto-installing node LTS..."
+    # shellcheck source=/dev/null
+    . "$HOME/.nvm/nvm.sh"
+    if nvm install --lts && nvm use --lts; then
+      upgraded=1
+    fi
+  fi
+
+  if [[ "$upgraded" -eq 1 ]]; then
+    # Re-resolve node from PATH in case brew/nvm relinked it.
+    hash -r
+    NODE_MAJOR=$(node -p 'parseInt(process.versions.node.split(".")[0],10)' 2>/dev/null || echo 0)
+    if [[ "$NODE_MAJOR" -ge 18 ]]; then
+      ok "node upgraded to $(node --version)"
+    else
+      fail "upgrade ran but node still resolves to $(node --version)."
+      echo "  Open a new terminal so PATH picks up the new binary, then re-run:"
+      printf "    \033[1mbash scripts/setup.sh\033[0m\n"
+      exit 1
+    fi
+  else
+    echo
+    echo "  Could not auto-upgrade. No supported package manager found."
+    echo "  Options:"
+    echo "    Homebrew:  brew install node && brew link --overwrite node"
+    echo "    nvm:       https://github.com/nvm-sh/nvm — then 'nvm install --lts'"
+    echo "    Installer: https://nodejs.org/ (download the LTS build)"
+    echo
+    echo "  Then re-run: bash scripts/setup.sh"
+    exit 1
+  fi
+fi
+ok "node version OK ($(node --version))"
 
 # Claude Code authentication probe. We just verified `claude` is on PATH;
 # now confirm it can actually round-trip with the LLM. Unauthenticated
